@@ -15,7 +15,7 @@ jobs:
           cache: 'yarn'
 
       - name: Install slackify-markdown
-        run: yarn add slackify-markdown
+        run: yarn add -W slackify-markdown
 
       - name: Create the MM Message
         env:
