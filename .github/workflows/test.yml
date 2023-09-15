@@ -21,7 +21,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh -R matter-labs/hardhat-zksync release view "$GITHUB_REF_NAME" --json tagName,body --template '## {{.tagName}} {{"\n"}}{{.body}}' > ./release_info
+          gh -R kiriyaga/webhook-test release view "$GITHUB_REF_NAME" --json tagName,body --template '## {{.tagName}} {{"\n"}}{{.body}}' > ./release_info
 
           # Use slackify-markdown to convert
           #SLACKIFIED_MESSAGE=$(npx slackify-markdown "$(cat ./release_info)")
