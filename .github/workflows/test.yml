@@ -1,0 +1,30 @@
+name: TEST SLACK MESSAGE
+
+on: [push]
+
+jobs:
+  send-message:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+          registry-url: 'https://registry.npmjs.org'
+          cache: 'yarn'
+
+      - name: Install slackify-markdown
+        run: yarn add slackify-markdown
+
+      - name: Create the MM Message
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          '## {{"Test"}} {{"\n"}}{{"**bold test**"}}' > ./release_info
+          jq --null-input --arg text "$(cat ./release_info)" '{"text": $text}' > mattermost.json
+
+      - uses: mattermost/action-mattermost-notify@master
+        env:
+          MATTERMOST_USERNAME: "Hardhat Release Bot"
+          MATTERMOST_WEBHOOK_URL: ${{ secrets.MATTERMOST_URL }}
