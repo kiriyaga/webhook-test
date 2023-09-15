@@ -17,12 +17,15 @@ jobs:
       - name: Install slackify-markdown
         run: yarn add slackify-markdown
 
-      - name: Create the MM Message
+      - name: Create the Slack Message
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          '## {{"Test"}} {{"\n"}}{{"**bold test**"}}' > ./release_info
-          jq --null-input --arg text "$(cat ./release_info)" '{"text": $text}' > mattermost.json
+          gh -R matter-labs/hardhat-zksync release view "$GITHUB_REF_NAME" --json tagName,body --template '## {{.tagName}} {{"\n"}}{{.body}}' > ./release_info
+
+          # Use slackify-markdown to convert
+          SLACKIFIED_MESSAGE=$(npx slackify-markdown "$(cat ./release_info)")
+          jq --null-input --arg text "$SLACKIFIED_MESSAGE" '{"text": $text}' > mattermost.json
 
       - uses: mattermost/action-mattermost-notify@master
         env:
